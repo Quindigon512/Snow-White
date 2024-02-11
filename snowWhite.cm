@@ -1,0 +1,570 @@
+//---------------------------------------------------------------------
+// Name : Quinn Trate & Joshua Carson
+// Email: qat5010@psu.edu & jkc6400@psu.edu
+// Class: CMPSC 472-002, Fall 2023
+//--------------------------------------------------------------------- 
+
+
+
+// Semaphores are Named After Subjects and Actions of Lines They Follow
+semaphore print;
+semaphore q_h_order;
+semaphore h_q_trick;
+semaphore q_p_disguise;
+semaphore p_sw_knock;
+semaphore sw_p_answer;
+semaphore p_sw_offer;
+semaphore h_sw_take;
+semaphore sw_h_follow;
+semaphore h_sw_tell;
+semaphore sw_d_sleep;
+semaphore d_sw_find;
+semaphore sw_d_explain;
+semaphore d_sw_lunch_done;
+semaphore sw_d_dead;
+semaphore d_sw_found;
+semaphore sw_d_bury;
+semaphore sw_p_empty_house;
+semaphore sw_lunch_prepare;
+semaphore sw_lunch_done;
+semaphore wash_queue_mutex;
+
+// Semaphores for getting Snow White to prepare the Dwarves Lunch
+semaphore sw_lunch;
+semaphore d1_lunch;
+semaphore d2_lunch;
+semaphore d3_lunch;
+
+// Semaphores for Getting the Order for the Housemaid Line
+semaphore d_perm1;
+semaphore d_perm2;
+semaphore d_perm3;
+
+// Semaphores and Integers for the Modified Lines with Alternate Endings
+semaphore d_mutex;
+semaphore s_mutex;
+int d_snowfinder = 0;
+int d_deadfinder = 0;
+
+// Variables for the Snow White Lunch Order
+int arr[3];
+int currDwarf = 0;
+
+// String Declarations
+string[10] SW;
+string[5] Q;
+string[11] OP;
+string[8] HM;
+string[5] D;
+string[1] space;
+string[2] space2;
+string[29] toWork;
+string[5] indent;
+string[10] forest;
+string[1] period;
+string[7] Ds;
+string[14] PA;
+string[10] o;
+string[34] trick;
+string[3] a;
+string[4] an;
+string[5] the;
+string[5] and;
+string[40] lets;
+
+// Delay to Make the Story More Dynamic
+const int DELAY = 100;
+void delay()
+{
+  int i;
+  int DelayTime;
+  DelayTime = random (DELAY);
+  for (i = 0; i < DelayTime; i++);
+}
+
+
+
+// Contains Strings Relating to the Queen with Extra Delays Since the Function is Short
+void queen()
+{
+	wait(print);
+	cout << Q << o << HM << space << "to" << space << "take" << space << SW << space << "into ";
+	cout << forest << and << "kill" << space << SW << period << endl;
+	signal(print);
+	delay();
+ 
+  	// Huntsman Can Now Execute
+	signal(q_h_order);
+ 
+  	// Waits for the Huntsman to Trick her to Continue
+	wait(h_q_trick);
+  	delay();
+  	delay();
+  	delay();
+  	delay();
+  	delay();
+  	wait(print);
+	cout << Q << "realizes" << space << "that" << space << HM << trick;
+	cout << SW << space << "herself" << period << endl;
+	signal(print);
+  	delay();
+  	delay();
+  	delay();
+  	delay();
+  	delay();
+  	wait(print);
+	cout << Q << space << "disguises" << space << "as" << an << OP << period << endl;
+	signal(print);
+	delay();
+ 
+  	// Queen Can now Disguise Herself as the Old Peddler
+	signal(q_p_disguise);
+}
+
+
+
+void oldPeddler()
+{
+  	// Waits for the Queen to Disguise Herself
+	wait(q_p_disguise);
+ 
+  	// Waits for the Dwarves' House to Empty
+	wait(sw_p_empty_house);
+	wait(print);
+	cout << OP << space << "knocks" << space << Ds << space << "house" << period << endl;
+	signal(print);
+	delay();
+ 
+  	// Allows the Old Peddler to Knock
+	signal(p_sw_knock);
+ 
+  	// Waits for Snow White to Answer
+	wait(sw_p_answer);
+	wait(print);
+	cout << OP << space << "offers" << space << SW << a << PA << period << endl;
+	signal(print);
+	delay();
+ 
+  	// Allows the Old Peddler to Offer Snow WHite the Apple
+	signal(p_sw_offer);
+}
+
+
+
+void huntsman()
+{
+  	// Huntaman Waits for Queen's Order
+	wait(q_h_order);
+	wait(print);
+	cout << space2<< HM << space << "takes" << space << SW << space;
+	cout << "into " << forest << period << endl;
+	signal(print);
+	delay();
+  
+  	// Allows the Huntsman to Take Snow White into the Forest
+	signal(h_sw_take);
+ 
+  	// Waits for Snow White to Follow the Huntsman
+	wait(sw_h_follow);
+	wait(print);
+	cout << space2 << HM << space << "tells" << space << Q << "'s" << space << "plan," << and;
+	cout << "let" << space << SW << space << "run" << space << "away" << period << endl;
+	signal(print);
+	delay();
+ 
+  	// Allows the Huntman to tell Snow White the Queen's Plan
+	signal(h_sw_tell);
+	wait(print);
+	cout << space2 << HM << space << "gives" << a << "stag's" << space << "heart";
+	cout << space << "to" << space << Q << period << endl;
+	signal(print);
+	delay();
+ 
+  	// Allows Queen to Realize she's been Tricked
+	signal(h_q_trick);
+}
+
+
+
+void snowWhite()
+{
+	int i;
+  
+  	// Waits for the Huntsman to Take Snow White into the Forest
+	wait(h_sw_take);
+	wait(print);
+	cout << space2 << space2 << SW << space << "follows" << space << HM << and << "entered";
+	cout << forest << period << endl;
+	signal(print);
+	delay();
+ 
+  	// Allows Snow White to Follow the Huntsman
+	signal(sw_h_follow);
+ 
+  	// Waits for the Huntsman to tell Snow White the Queen's Plan
+	wait(h_sw_tell);
+	wait(print);
+	cout << space2 << space2 << SW << space << "escapes," << space << "finds" << space << Ds;
+	cout << "s'" << space << "house," << and << "falls" << space << "asleep" << period << endl;
+	signal(print);
+	delay();
+ 
+  	// Allows the Dwarves to Find her Asleep
+	signal(sw_d_sleep);
+ 
+  	// Waits for the 3 Dwarves to Find Snow White
+	wait(d_sw_find);
+	wait(d_sw_find);
+	wait(d_sw_find);
+	
+	wait(print);
+	cout << space2 << space2 << SW << space << "explains" << space << "to" << space << Ds;
+	cout << space << "what" << space << "happened" << period << endl;
+	signal(print);
+	delay();
+ 
+  	// Allows snowWhite to Continues After her Explanation to the 3 Dwarves
+	signal(sw_d_explain);
+	signal(sw_d_explain);
+	signal(sw_d_explain);
+ 
+ 	// For Loop For Getting the Dwarf Out of the Array
+ 	for (i = 0; i < 3; i++)
+ 	{
+ 		// Waits for the Dwarves to Wash
+ 		wait(sw_lunch);
+	 	if (arr[i] == 1)
+	 	{
+	 		wait(print);
+	 		cout << space2 << space2 << SW << space << "prepares" << space << "lunch" << space;
+	 		cout << "for" << space << D << space << "1" << period << endl;
+	 		signal(print);
+	 		delay();
+	 		delay();
+	 		delay();
+	 		delay();
+	 		delay();
+	 		delay();
+	 		delay();
+	 		delay();
+	 		// Allows Dwarf 1 to Eat
+	 		signal(d1_lunch);
+	 	}
+	 	else if (arr[i] == 2)
+	 	{
+	 		wait(print);
+	 		cout << space2 << space2 << SW << space << "prepares" << space << "lunch" << space;
+	 		cout << "for" << space << D << space << "2" << period << endl;
+	 		signal(print);
+	 		delay();
+	 		delay();
+	 		delay();
+	 		delay();
+	 		delay();
+	 		delay();
+	 		delay();
+	 		delay();
+	 		// Allows Dwarf 2 to Eat
+	 		signal(d2_lunch);
+	 	}
+	 	else if (arr[i] == 3)
+	 	{
+	 		wait(print);
+	 		cout << space2 << space2 << SW << space << "prepares" << space << "lunch" << space;
+	 		cout << "for" << space << D << space << "3" << period << endl;
+	 		signal(print);
+	 		delay();
+	 		delay();
+	 		delay();
+	 		delay();
+	 		delay();
+	 		delay();
+	 		delay();
+	 		delay();
+	 		// Allows Dwarf 3 to Eat
+	 		signal(d3_lunch);
+	 	}
+ 	}
+
+ 	// Waits for the Dwarves to Finish Lunch
+	wait(d_sw_lunch_done);
+	wait(d_sw_lunch_done);
+	wait(d_sw_lunch_done);
+ 
+  	// Allows for the Old Peddler to Show Up
+	signal(sw_p_empty_house);
+ 
+  	// Waits for the Old Peddler to Knock
+	wait(p_sw_knock);
+  	delay();
+  	wait(print);
+	cout << space2 << space2 << SW << space << "listens" << space << "door" << space << "knocking" << space;
+	cout << "sounds," << and << "opens" << space <<  "door" << period << endl;
+	signal(print);
+	delay();
+ 
+  	// Allows Snow White to Answer the Door
+	signal(sw_p_answer);
+ 
+  	// Waits for the Old Peddler to Offer the Apple
+	wait(p_sw_offer);
+	wait(print);
+	cout << space2 << space2 << SW << space << "eats" << the << PA << period << endl;
+	signal(print);
+	delay();
+	wait(print);
+	cout << space2 << space2 << SW << space << "falls" << space << "to" << a << "coma" << period << endl;
+	signal(print);
+	delay();
+ 
+  	// Allows the Dwarves to Find Snow White in a Coma
+	signal(sw_d_dead);
+	signal(sw_d_dead);
+	signal(sw_d_dead);
+ 
+  	// Waits for the 3 Dwarves to Find Snow White Dead
+	wait(d_sw_found);
+	wait(d_sw_found);
+	wait(d_sw_found);
+ 
+  	// Allows the 3 Dwarves to Bury Snow White
+	signal(sw_d_bury);
+	signal(sw_d_bury);
+	signal(sw_d_bury);
+}
+
+
+
+void dwarves(int n)
+{
+	wait(print);
+	cout << D << space << n << toWork << endl;
+	signal(print);
+	delay();
+ 
+  	// Waits for Snow White to Fall Asleep in the Dwarves' House
+	wait(sw_d_sleep);
+  	delay();
+  
+  	// Allows for Snow White to fall Asleep
+	signal(sw_d_sleep);
+ 
+  	// Mutex for Making If Statement Work
+	wait(s_mutex);
+  	delay();
+	
+  	// If Statement Ensures that the Final Dwarf to find Snow White Wakes her Up
+	if(d_snowfinder == 2)
+	{
+		wait(print);
+		cout << indent << D << space << n << " comes home, finds " << SW;
+		cout << and << "wakes " << SW << period << endl;
+		signal(print);
+		delay();
+	}
+	else
+	{
+		d_snowfinder = d_snowfinder + 1;
+		wait(print);
+		cout << indent << D << space << n << " comes home, finds " << SW << period << endl;
+		signal(print);
+		delay();
+	}
+	
+  	// Mutex for Making If Statement Work
+	signal(s_mutex);
+ 
+  	// Allows the Dwarves to Find Snow White Asleep
+	signal(d_sw_find);
+ 
+  	// Waits for Snow White's Explanation
+	wait(sw_d_explain);
+  	delay();
+	
+	// If Statements and Mutexs Ensure the Dwarves let her Stay in Numerical Order
+	if(n == 1)
+	{
+		wait(print);
+		cout << indent << D << space << n << lets << Ds << "s" << period << endl;
+		signal(print);
+		delay();
+		signal(d_perm1);
+		signal(d_perm1);
+		wait(d_perm3);
+	}
+	else if(n == 2)
+	{
+		wait(d_perm1);
+		wait(print);
+		cout << indent << D << space << n << lets << Ds << "s" << period << endl;
+		signal(print);
+		delay();
+		signal(d_perm2);
+		wait(d_perm3);
+	}
+	else if(n == 3)
+	{
+		wait(d_perm2);
+		wait(d_perm1);
+		wait(print);
+		cout << indent << D << space << n << lets << Ds << "s" << period << endl;
+		signal(print);
+		delay();
+		signal(d_perm3);
+		signal(d_perm3);
+	}
+	delay();
+	
+	// Waits on the Queue
+	wait(wash_queue_mutex);
+	wait(print);
+	cout << indent << D << space << n << " washes for lunch" << period << endl;
+	signal(print);
+	delay();
+	delay();
+	delay();
+	
+	// Input the Current Dwarf into the Array
+	arr[currDwarf] = n;
+	currDwarf = currDwarf + 1;
+	
+	// Signal to Snow White the Dwarf is Ready for Lunch
+ 	signal(sw_lunch);
+ 	
+ 	// Signals the Queue
+	signal(wash_queue_mutex);
+ 
+ 	// If Statement for Waiting on Snow White to Make the Lunch
+ 	if (n == 1)
+ 		wait(d1_lunch);
+ 	else if (n == 2)
+ 		wait(d2_lunch);
+ 	else if (n == 3)
+ 		wait(d3_lunch);
+ 
+ 	wait(print);
+ 	cout << indent << D << space << n << " eats lunch and goes to work" << period << endl;
+	signal(print);
+	delay();
+ 
+  	// Allows Snow White to Finish the Dwarves' Lunch
+	signal(d_sw_lunch_done);
+ 
+  	// Waits for Snow White to Fall into a Coma
+	wait(sw_d_dead);
+  	delay();
+  
+  	// Mutex for Making If Statement Work
+	wait(d_mutex);
+  	delay();
+	
+  	// If Statement Ensures that the First Dwarf to Come Home Finds Snow White Dead
+	if(d_deadfinder == 0)
+	{
+		d_deadfinder = 1;
+		wait(print);
+		cout << indent << D << space << n << " comes home, finds " << SW << " dead, and calls all ";
+		cout << Ds << "s" << period << endl;
+		signal(print);
+		delay();
+	}
+	else
+	{
+		wait(print);
+		cout << indent << D << space << n << " comes home" << period << endl;
+		signal(print);
+		delay();
+	}
+	
+  	// Mutex for Making If Statement Work
+	signal(d_mutex);
+ 
+  	// Allows the Dwarves to find Snow White
+	signal(d_sw_found);
+ 
+  	// Waits for snowWhite to Finish
+	wait(sw_d_bury);
+  	delay();
+  	wait(print);
+  	cout << indent << D << space << n << " places " << SW << " in a glass casket as" << a;
+  	cout << "funeral for her, with other" << space << Ds << "s" << period << endl;
+	signal(print);
+	delay();
+}
+
+
+
+void main()
+{
+    // Initialize the Semaphores
+    initialsem(q_h_order, 0);
+    initialsem(h_q_trick, 0);
+    initialsem(q_p_disguise, 0);
+    initialsem(p_sw_knock, 0);
+    initialsem(sw_p_answer, 0);
+    initialsem(p_sw_offer, 0);
+    initialsem(h_sw_take, 0);
+    initialsem(sw_h_follow, 0);
+    initialsem(h_sw_tell, 0);
+    initialsem(sw_d_sleep, 0);
+    initialsem(d_sw_find, 0);
+    initialsem(sw_d_explain, 0);
+    initialsem(d_sw_lunch_done, 0);
+    initialsem(sw_d_dead, 0);
+    initialsem(d_sw_found, 0);
+    initialsem(sw_d_bury, 0);
+    initialsem(sw_p_empty_house, 0);
+    initialsem(sw_lunch_prepare, 0);
+    initialsem(sw_lunch_done, 0);
+    initialsem(wash_queue_mutex, 1);
+    initialsem(d_perm1, 0);
+    initialsem(d_perm2, 0);
+    initialsem(d_perm3, 0);
+    initialsem(sw_lunch, 0);
+    initialsem(d1_lunch, 0);
+    initialsem(d2_lunch, 0);
+    initialsem(d3_lunch, 0);
+    initialsem(print, 1);
+    initialsem(d_mutex, 1);
+    initialsem(s_mutex, 1);
+    
+    // Initialize the Strings
+    stringCopy(SW, "Snow White");
+    stringCopy(Q, "Queen");
+    stringCopy(OP, "Old Peddler");
+    stringCopy(HM, "Huntsman");
+    stringCopy(D, "Dwarf");
+    stringCopy(space, " ");
+    stringCopy(space2, "  ");
+    stringCopy(toWork, " goes to work in the morning.");
+    stringCopy(indent, "      ");
+    stringCopy(forest, "the forest");
+    stringCopy(period, ".");
+    stringCopy(Ds, "Dwarve");
+    stringCopy(PA, "poisoned apple");
+    stringCopy(o, " orders a ");
+    stringCopy(trick, " tricked her, and decides to kill ");
+    stringCopy(a, " a ");
+    stringCopy(an, " an ");
+    stringCopy(the, " the ");
+    stringCopy(and, " and ");
+    stringCopy(lets, " lets her stay as housemaid, with other ");
+
+    // Intro
+    cout << "Once upon" << a << "time, there lived" << a << "lovely little princess named " << SW << period << endl;
+    
+    // Concurrent Functions
+    cobegin
+    {
+        queen();
+        oldPeddler();
+        huntsman();
+        snowWhite();
+        dwarves(1);
+        dwarves(2);
+        dwarves(3);
+    }
+    
+    // Outro
+    cout << "To be continued..." << endl;
+}
